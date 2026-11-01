@@ -40,7 +40,8 @@ Samples の公式サンプルのうち、次のシーンはプロジェクトに
 - XR Plug-in Management: Android の OpenXR ローダー、Feature Group「Android XR」、Project Validation の指摘 0 件
 - Player Settings: Vulkan / IL2CPP / ARM64 / Min API 25 / GameActivity
 - URP: HDR と post-processing を無効
-- Unbounded Reference Space は OFF（起動時の正面が +Z になるように）
+- XR Origin: Tracking Origin Mode は Device。起動時の頭の位置と向きが原点（正面が +Z）で、Android XR の設定の「中央に再配置」にも追従する。Not Specified / Floor だと STAGE（システムの境界の空間）が使われ、前回の原点が引き継がれる
+- Unbounded Reference Space の Feature は OFF。Tracking Origin Mode で Unbounded を指定したときだけ使われる（現実の空間に固定され、再配置に追従しない）
 - Eye Gaze Interaction Profile と Foveated Rendering は OFF（ON にすると、どのシーンでも起動時にアイトラッキングの許可を求められる）。`Tools > Android XR > Enable Eye Tracking` で Eye Gaze を ON にできる
 - パススルーのシーン: カメラに AR Camera Manager、背景は Solid Color・アルファ 0、Post Processing は OFF、AR Session を配置
 - 空間認識（パススルーのシーン）: Android XR Extensions の Scene Meshing で現実の床・壁・家具をメッシュにする（`Assets/AndroidXR/Scripts/SpatialMeshController.cs`）
@@ -96,6 +97,8 @@ Unity Hub から作った場合は、`Tools > Android XR > Import Hand Visualize
 - Samples の一部の音声ミキサーは Microsoft Spatializer（Windows 用のネイティブプラグイン）を参照しているため、ビルド時に「Effect Microsoft Spatializer Mixer could not be found」が出ます。Android ではこのプラグインの HRTF（上下・前後の方向感）が使えないだけで、音源の位置による聞こえ方の違いや、壁で音が小さくなる処理（AudioOcclusionExample）は動きます。ビルドと実行には影響しません。
 - MRTK3 の「見てピンチ（Gaze Pinch）」は、Android XR デバイス（Galaxy XR）では動きません。視線で選ぶ（ハイライト）ことはでき、掴むのは手のレイか直接つかみで行えます。
 - Samples の SolverExamples と TapToPlaceExample は、ARMeshManager（部屋のメッシュの表示）を止め、仮想の床と壁（TestDummyWalls）のマテリアルを半透明のものに差し替えています。元のワイヤーフレームのマテリアル（MRTK_Wireframe）はジオメトリシェーダーを使っていて、Android XR（Vulkan のマルチビュー）では左目の映像が崩れるためです。吸着や配置は仮想の床と壁で試せます。
+- Tracking Origin Mode が Device なので、床の高さは分かりません。XR Origin の Camera Y Offset（基本版 1.5 m、MRTK XR Rig 1.6 m）を頭の高さとして足しているため、座って使うとコンテンツが少し高く見えます。
+- 「中央に再配置」のあと、空間メッシュは現実に合う位置へ作り直します（数秒かかります）。
 - パススルーのオクルージョンは、空間認識のメッシュで行います（現実の床・壁・家具の後ろの仮想物が隠れる）。手のように動く物では隠れません。AR Foundation の深度によるオクルージョン（AR Occlusion Manager）は、深度を読む専用のシェーダーが必要なので入れていません。
 
 ## リポジトリの構成

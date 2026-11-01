@@ -7,7 +7,7 @@
 .EXAMPLE
   ./Install-Templates.ps1                         # 最新リリースの 3 テンプレートをすべて
   ./Install-Templates.ps1 -Template androidxr     # 基本版だけ
-  ./Install-Templates.ps1 -Tag v2.3.0 -Destination "$HOME/Unity user templates"
+  ./Install-Templates.ps1 -Tag v2.4.0 -Destination "$HOME/Unity user templates"
 #>
 param(
     [ValidateSet('androidxr', 'androidxr-mrtk3', 'androidxr-mrtk3-samples')]

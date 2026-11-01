@@ -66,9 +66,12 @@ public static class AndroidXRSceneSetup
         origin.Origin = originGo;
         origin.CameraFloorOffsetObject = offsetGo;
         origin.Camera = camera;
-        // Tracking Origin Mode は既定（Not Specified）のまま。起動時の頭の位置・向きが原点になり、+Z が正面になる
+        // Device: 起動時の頭の位置・向きが原点になり、+Z が正面。Android XR の「中央に再配置」にも追従する
+        // （Not Specified / Floor は床基準の空間になり、再配置に追従しない）。頭の高さは Camera Y Offset で足す
+        origin.RequestedTrackingOriginMode = XROrigin.TrackingOriginMode.Device;
+        origin.CameraYOffset = 1.5f;
 
-        // 見回したときの目印（床から 1.5 m、正面 1.5 m）
+        // 見回したときの目印（高さ 1.5 m = 目の高さ、正面 1.5 m）
         var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         cube.name = "Reference Cube";
         cube.transform.position = new Vector3(0f, 1.5f, 1.5f);

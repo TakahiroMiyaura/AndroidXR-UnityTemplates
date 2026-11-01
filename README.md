@@ -40,7 +40,8 @@ The following official samples stay in the Samples project but are not in the bu
 - XR Plug-in Management: OpenXR loader for Android, the "Android XR" feature group, and no Project Validation issues
 - Player Settings: Vulkan / IL2CPP / ARM64 / Min API 25 / GameActivity
 - URP: HDR and post-processing disabled
-- Unbounded Reference Space is off, so that +Z is the direction you face at startup
+- XR Origin: Tracking Origin Mode is Device. The origin is your head at startup (+Z is the direction you face), and it follows Recenter in the Android XR settings. Not Specified / Floor would use the STAGE space (the system boundary), whose origin is kept from earlier sessions
+- The Unbounded Reference Space feature is off. It is only used when you request the Unbounded tracking origin mode (world-locked, does not follow Recenter)
 - Eye Gaze Interaction Profile and Foveated Rendering are off. When they are on, every scene asks for eye tracking permission at startup. Turn on Eye Gaze with `Tools > Android XR > Enable Eye Tracking`
 - Passthrough scenes: AR Camera Manager on the camera, Solid Color background with alpha 0, Post Processing off, and an AR Session
 - Spatial awareness (passthrough scenes): real floors, walls, and furniture become meshes with Android XR Extensions Scene Meshing (`Assets/AndroidXR/Scripts/SpatialMeshController.cs`)
@@ -96,6 +97,8 @@ Some code in the packages used here does not compile as is. It has been fixed up
 - Some audio mixers in the Samples refer to Microsoft Spatializer (a native plug-in for Windows), so the build shows "Effect Microsoft Spatializer Mixer could not be found". On Android, only the plug-in's HRTF (the sense of up/down and front/back) is unavailable. Changes in sound by source position and the muffling behind walls (AudioOcclusionExample) still work. The build and the app are not affected.
 - MRTK3 gaze pinch (look and pinch) does not work on Android XR devices (Galaxy XR). Selecting with your eyes (highlight) works, and you can grab with the hand ray or by grabbing directly.
 - In SolverExamples and TapToPlaceExample of the Samples, ARMeshManager (room mesh display) is disabled and the material of the virtual floor and walls (TestDummyWalls) is replaced with a semi-transparent one. The original wireframe material (MRTK_Wireframe) uses a geometry shader, which breaks the left-eye image on Android XR (Vulkan multiview). You can still try snapping and placement on the virtual floor and walls.
+- With Tracking Origin Mode Device, the floor height is not known. The camera height is assumed with XR Origin Camera Y Offset (1.5 m in the basic template, 1.6 m in the MRTK XR Rig), so content can look higher than expected when you sit.
+- After Recenter, the spatial meshes are regenerated so that they line up with the real world again (it takes a few seconds).
 - Passthrough occlusion uses the spatial awareness meshes (virtual objects behind real floors, walls, and furniture are hidden). Moving things such as your hands do not hide virtual objects. Depth-based occlusion with AR Foundation (AR Occlusion Manager) is not included, because it needs special shaders that read the depth.
 
 ## Repository layout

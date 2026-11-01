@@ -8,10 +8,12 @@ using UnityEngine.XR;
 /// メッシュはプレハブ（奥行きだけ書くマテリアル + MeshCollider）で置くので、
 /// 現実の物の後ろの仮想物が隠れ、仮想物は現実の床や壁に当たる。
 ///
-/// XR Origin の子に置き、SCENE_UNDERSTANDING_FINE が許可されてから有効にする（EnableAfterPermission）。
+/// XR Origin の Camera Offset の子に置き、SCENE_UNDERSTANDING_FINE が許可されてから有効にする（EnableAfterPermission）。
 /// Extensions のメッシュは位置・向き・大きさを生成結果で返すので、それを各メッシュの Transform に反映する
 /// （AR Mesh Manager はこれを反映しないため使わない）。
 /// 作り直しは少しずつ・間を空けて行う。一度に全部作り直すとコライダーの作成で CPU を使い切り、端末全体が重くなる。
+/// Android XR の「中央に再配置」で原点が変わると、置いてあるメッシュは古い原点のまま一緒に回ってしまうので、
+/// すべて作り直して、新しい原点での位置に置き直す。
 ///
 /// Builds real-world meshes (floor, walls, furniture) with Android XR Extensions scene meshing.
 /// Each mesh uses the prefab (depth-only material + MeshCollider): virtual objects behind real surfaces are hidden
@@ -35,6 +37,7 @@ public class SpatialMeshController : MonoBehaviour
     readonly List<MeshId> pending = new List<MeshId>();
     readonly HashSet<MeshId> pendingSet = new HashSet<MeshId>();
     XRMeshSubsystem subsystem;
+    readonly List<XRInputSubsystem> inputSubsystems = new List<XRInputSubsystem>();
     int generating;
     float nextBatchTime;
 
@@ -48,6 +51,23 @@ public class SpatialMeshController : MonoBehaviour
         subsystem = list.Count > 0 ? list[0] : null;
         if (subsystem == null)
             Debug.LogWarning("[SpatialMeshController] No XRMeshSubsystem. Enable 'Android XR (Extensions): Scene Meshing' in the OpenXR settings.");
+
+        // 原点が変わったら（中央に再配置など）、置いてあるメッシュを作り直す
+        SubsystemManager.GetSubsystems(inputSubsystems);
+        foreach (var input in inputSubsystems) input.trackingOriginUpdated += OnTrackingOriginUpdated;
+    }
+
+    void OnDisable()
+    {
+        foreach (var input in inputSubsystems) input.trackingOriginUpdated -= OnTrackingOriginUpdated;
+        inputSubsystems.Clear();
+    }
+
+    void OnTrackingOriginUpdated(XRInputSubsystem input)
+    {
+        foreach (var id in meshes.Keys)
+            if (pendingSet.Add(id)) pending.Add(id);
+        Debug.Log($"[SpatialMeshController] Tracking origin updated. Regenerating {pending.Count} meshes");
     }
 
     void Update()

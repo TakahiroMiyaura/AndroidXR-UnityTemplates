@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 28
-  productGUID: 4b61c9c3a1569e047bed17b7a5dd36fc
+  productGUID: 62e02327760bbfa43b45b0a864a71a43
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -933,7 +933,7 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 1
   windowsGamepadBackendHint: 0
-  cloudProjectId: b6a7c19b-9d03-4914-9c81-f6726f04e25e
+  cloudProjectId: ff31d6ea-a547-4b69-a59a-dd964839f853
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
   projectName: AndroidXR

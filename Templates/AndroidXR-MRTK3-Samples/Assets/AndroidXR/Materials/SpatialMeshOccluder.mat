@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: SpatialMeshOccluder
-  m_Shader: {fileID: 4800000, guid: d691d1016bfded743b36b91d95457170, type: 3}
+  m_Shader: {fileID: 4800000, guid: 0feb4a2b87494bd4db507818d51cd804, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
