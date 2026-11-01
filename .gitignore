@@ -1,0 +1,11 @@
+Templates/*/[Ll]ibrary/
+Templates/*/[Tt]emp/
+Templates/*/[Ll]ogs/
+Templates/*/[Uu]ser[Ss]ettings/
+Templates/*/[Bb]uilds/
+Templates/*/*.csproj
+Templates/*/*.sln
+Templates/*/*.slnx
+Templates/*/.vs/
+release/
+Templates/AndroidXR-MRTK3-Samples/Packages/MRTK/*.tgz

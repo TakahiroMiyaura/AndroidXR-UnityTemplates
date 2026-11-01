@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/MRTK3_VR_SampleScene.unity
+    guid: 383c6c9fcd2a7c041b8ad957f6fa21f0
+  - enabled: 1
+    path: Assets/Scenes/MRTK3_Passthrough_SampleScene.unity
+    guid: fe2ec8507d89a8b448f956527e072b22
+  - enabled: 1
+    path: Assets/Scenes/MRTK3_EyeAndHand_SampleScene.unity
+    guid: c00e6fa8136194144bf4a09057664d4c
+  m_configObjects:
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: a9150671ad4541045a2b39c92b6df7dc, type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 8a127bc8050948a4a9d4b68eba751fe4, type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: b57169a12e3aaf6479c59d5e471a586a, type: 2}
+  m_UseUCBPForAssetBundles: 0
