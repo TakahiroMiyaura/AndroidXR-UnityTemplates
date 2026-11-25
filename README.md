@@ -7,7 +7,7 @@ Use them from the Unity Hub "New project" window or with `unity projects create 
 
 | Template | Name (`--template`) | Contents |
 |---|---|---|
-| Android XR | `com.reseul.template.androidxr` | URP with the Android XR packages and settings. XR Origin, a cube in front of you, and hand visualization |
+| Android XR | `com.reseul.template.androidxr` | URP with the Android XR packages and settings. XR Origin, a cube in front of you, hand visualization, and hand interaction with plain XR Interaction Toolkit (grab, release to drop, poke a button) |
 | Android XR with MRTK3 | `com.reseul.template.androidxr-mrtk3` | The above plus MRTK3. MRTK XR Rig and a cube you can grab with your hands |
 | Android XR with MRTK3 (Samples) | `com.reseul.template.androidxr-mrtk3-samples` | The above plus the official MRTK3 sample scenes |
 
@@ -49,6 +49,11 @@ The following official samples stay in the Samples project but are not in the bu
   - The meshes have MeshColliders, so virtual objects hit the real floor and walls (release a cube or ball and it falls and rolls on the floor)
   - Meshing starts after the `SCENE_UNDERSTANDING_FINE` permission is granted (`EnableAfterPermission`). Objects stay in the air until a floor is found below them (`GravityWhenGroundFound`)
   - Turn on **Show Mesh** on `SpatialMeshController` to draw the meshes semi-transparent (for checking)
+- Hand interaction (Android XR template): both hands have a Near-Far Interactor (grab near or with a ray, by pinching) and a Poke Interactor, built only from XR Interaction Toolkit parts (no XRI samples)
+  - Hand poses and pinch input come from the OpenXR Hand Interaction Profile (`<HandInteraction>`)
+  - The cube floats until you grab and release it once, then falls. The ball in the passthrough scene falls once the spatial mesh is found below it. Objects that fall through a hole in the mesh return to their start position
+  - Poke the **Reset Button** with a finger to put the cube and ball back (`PokeButtonVisual` moves the cap and changes its color)
+  - `Tools > Android XR > Add Hand Interaction` adds the same hands to an XR Origin in another scene
 - MRTK3: an Android XR profile that takes hand joints from XR Hands (`UnityHandsSubsystem`) is assigned to Android
 - `Assets/Editor/ManifestDedupe.cs`: merges the duplicated `uses-feature android.software.xr.api.spatial` entries (without it, the APK build fails)
 - `Assets/Editor/AndroidXRProjectInit.cs`: sets the package name and product name

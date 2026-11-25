@@ -7,7 +7,7 @@ Unity Hub の新規作成画面、または Unity CLI の `unity projects create
 
 | テンプレート | 名前（`--template`） | 中身 |
 |---|---|---|
-| Android XR | `com.reseul.template.androidxr` | URP + Android XR のパッケージと設定。XR Origin・正面のキューブ・手のゴースト |
+| Android XR | `com.reseul.template.androidxr` | URP + Android XR のパッケージと設定。XR Origin・正面のキューブ・手のゴースト・素の XR Interaction Toolkit での手の操作（つかむ・離すと落ちる・指でボタンを押す） |
 | Android XR with MRTK3 | `com.reseul.template.androidxr-mrtk3` | 上記 + MRTK3。MRTK XR Rig と、手で掴めるキューブ |
 | Android XR with MRTK3 (Samples) | `com.reseul.template.androidxr-mrtk3-samples` | 上記 + MRTK3 の公式サンプルシーン一式 |
 
@@ -49,6 +49,11 @@ Samples の公式サンプルのうち、次のシーンはプロジェクトに
   - MeshCollider 付きなので、仮想物が現実の床や壁に当たる（キューブやボールを離すと床に落ちて転がる）
   - `SCENE_UNDERSTANDING_FINE` の許可を得てから動き出す（`EnableAfterPermission`）。物体は床が見つかるまで空中で止まる（`GravityWhenGroundFound`）
   - `SpatialMeshController` の **Show Mesh** を ON にすると、メッシュを半透明で表示できる（確認用）
+- 手の操作（Android XR テンプレート）: 両手に Near-Far Interactor（近くの物、またはレイの先の物をピンチでつかむ）と Poke Interactor。XRI のサンプルは使わず、XR Interaction Toolkit 本体の部品だけで組んでいる
+  - 手の位置・向きとピンチの入力は OpenXR の Hand Interaction Profile（`<HandInteraction>`）から取る
+  - キューブは一度つかんで離すまで空中で止まり、離すと落ちる。パススルーのシーンのボールは、真下に空間認識のメッシュが見つかると落ちる。メッシュの穴（見えていない陰の部分など）から落ちた物は元の位置に戻る
+  - **Reset Button** を指で押すと、キューブとボールが元の位置に戻る（`PokeButtonVisual` がボタンを押し込み、色を変える）
+  - `Tools > Android XR > Add Hand Interaction` で、ほかのシーンの XR Origin にも同じ手を追加できる
 - MRTK3: Android XR 用のプロファイル（手の関節を XR Hands から取る `UnityHandsSubsystem`）を Android に割り当て
 - `Assets/Editor/ManifestDedupe.cs`: `uses-feature android.software.xr.api.spatial` の二重注入を畳む（無いと APK のビルドが失敗する）
 - `Assets/Editor/AndroidXRProjectInit.cs`: パッケージ名と製品名を設定する
