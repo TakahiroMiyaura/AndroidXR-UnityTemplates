@@ -187,7 +187,8 @@ public static class AndroidXRSceneSetup
         nearFar.farInteractionCaster = far;
         // テンプレートには UI が無い（UI を使うなら ON にし、EventSystem に XR UI Input Module を置く）
         nearFar.enableUIInteraction = false;
-        // ピンチ（親指と人差し指）か握りで選択する。XRHandDevice（XR Hands）と HandInteraction（OpenXR）の両方を見る
+        // ピンチ（親指と人差し指）か握りで選択する。値は HandInteraction（OpenXR）から入る。
+        // XRHandDevice（XR Hands）の pinch / grasp は、XR Hands の取得元を CommonGestures にしたときだけ値が入る（既定の Legacy では 0）
         nearFar.selectInput = Button($"{side} Select", side,
             new[] { "<XRHandDevice>{H}/pinchTouched", "<XRHandDevice>{H}/graspFirm", "<HandInteraction>{H}/pinchTouched", "<HandInteraction>{H}/graspFirm" },
             new[] { "<XRHandDevice>{H}/pinchValue", "<XRHandDevice>{H}/graspValue", "<HandInteraction>{H}/pinchValue", "<HandInteraction>{H}/graspValue" });
@@ -223,8 +224,9 @@ public static class AndroidXRSceneSetup
     }
 
     // OpenXR の Hand Interaction Profile（XR_EXT_hand_interaction）の aim / pinch / poke の姿勢を Tracked Pose Driver で反映する。
-    // XRI の Starter Assets は XR Hands の <XRHandDevice> を使うが、AURA ではそちらの aim / pinch / poke が 0 のまま
-    // （関節だけ取れる）で、レイが目の位置から出た。<HandInteraction> は Galaxy XR・AURA の両方で取れる。
+    // XRI の Starter Assets は XR Hands の <XRHandDevice> を使う。XR Hands の既定の取得元（xrHandDevicePoseSource = LegacyJointRecognition）では
+    // <XRHandDevice> の aim の姿勢が 0 のまま（pinch / poke の位置は指先の関節から入る）で、レイが原点から出る（端末によらない。AURA・Galaxy XR で確認）。
+    // XRHandSubsystem.UpdateHandsConfiguration で CommonGestures にすれば <XRHandDevice> でも取れるが、ここでは <HandInteraction> を直接使う。
     // 姿勢は 1 つの入力元だけにする（2 つバインドすると、値が少し違うときに入力元が行き来して揺れる）
     static void AddPoseDriver(GameObject go, string side, string pose)
     {
