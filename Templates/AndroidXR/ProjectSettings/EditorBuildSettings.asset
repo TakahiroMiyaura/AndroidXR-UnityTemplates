@@ -10,10 +10,13 @@ EditorBuildSettings:
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
     path: Assets/Scenes/Passthrough_SampleScene.unity
-    guid: f30858e9d3a890b4b9e93798f5a6db24
+    guid: c9de98d85779f164d98ab5dc55772729
+  - enabled: 1
+    path: Assets/Scenes/Trackpad_SampleScene.unity
+    guid: 91cf85b2cbbc4cc48a04e80a9fe5e658
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-    com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: 901f959a44d7d044fb23b9482e66cf05, type: 2}
-    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 904246d9a64570243b0e26fd137a7307, type: 2}
-    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 2bf85c9aebfb2d3439569c040c29151c, type: 2}
+    com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: 851bab8309dd0f349a1ad0c49bd3747b, type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 4669588ad4a586946b2380b88fa847b5, type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 44893c901795f5e458896a6b46dfcf09, type: 2}
   m_UseUCBPForAssetBundles: 0

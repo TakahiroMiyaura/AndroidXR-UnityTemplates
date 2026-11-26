@@ -7,7 +7,7 @@ Unity Hub の新規作成画面、または Unity CLI の `unity projects create
 
 | テンプレート | 名前（`--template`） | 中身 |
 |---|---|---|
-| Android XR | `com.reseul.template.androidxr` | URP + Android XR のパッケージと設定。XR Origin・正面のキューブ・手のゴースト・素の XR Interaction Toolkit での手の操作（つかむ・離すと落ちる・指でボタンを押す） |
+| Android XR | `com.reseul.template.androidxr` | URP + Android XR のパッケージと設定。XR Origin・正面のキューブ・手のゴースト・素の XR Interaction Toolkit での手の操作（つかむ・離すと落ちる・指でボタンを押す）・トラックパッド（AURA のパック）のサンプル |
 | Android XR with MRTK3 | `com.reseul.template.androidxr-mrtk3` | 上記 + MRTK3。MRTK XR Rig と、手で掴めるキューブ |
 | Android XR with MRTK3 (Samples) | `com.reseul.template.androidxr-mrtk3-samples` | 上記 + MRTK3 の公式サンプルシーン一式 |
 
@@ -17,7 +17,7 @@ Unity Hub の新規作成画面、または Unity CLI の `unity projects create
 
 | テンプレート | シーン |
 |---|---|
-| Android XR | `VR_SampleScene`（最初）、`Passthrough_SampleScene` |
+| Android XR | `VR_SampleScene`（最初）、`Passthrough_SampleScene`、`Trackpad_SampleScene`（AURA のパックなどのトラックパッドでキューブを動かす。下記参照） |
 | Android XR with MRTK3 | `MRTK3_VR_SampleScene`（最初）、`MRTK3_Passthrough_SampleScene`、`MRTK3_EyeAndHand_SampleScene`（視線で選び、手で掴む。シーン内に英語の説明あり） |
 | Android XR with MRTK3 (Samples) | `HandInteractionExamples`（最初）、`HandInteractionExamples_Passthrough`（パススルーと空間認識を使うように改造したもの）、ほかの公式サンプル（Android XR で使えるものだけビルドに入れる。手のメニューの「次へ／前へ」で切り替え）。上記 MRTK3 の 3 シーンは MRTK3 のサンプルではないので入れていません |
 
@@ -54,6 +54,11 @@ Samples の公式サンプルのうち、次のシーンはプロジェクトに
   - キューブは一度つかんで離すまで空中で止まり、離すと落ちる。パススルーのシーンのボールは、真下に空間認識のメッシュが見つかると落ちる。メッシュの穴（見えていない陰の部分など）から落ちた物は元の位置に戻る
   - **Reset Button** を指で押すと、キューブとボールが元の位置に戻る（`PokeButtonVisual` がボタンを押し込み、色を変える）
   - `Tools > Android XR > Add Hand Interaction` で、ほかのシーンの XR Origin にも同じ手を追加できる
+- トラックパッド（`Trackpad_SampleScene`、Android XR テンプレート）: XREAL Project AURA のパックなどのトラックパッドで、正面のキューブを動かす。パネルの横の大きな **RAW** ボタンを押すと、2 通りの取り方を切り替える
+  - RAW: OFF（起動時）は OpenXR のマウス（Android Mouse Interaction Profile）。来るのは `click`（1 本指）・`secondaryClick`（2 本指）・`scroll`（2 本指でなぞる。移動量だけで、値が変わるのは 1 秒に約 18 回）だけ。触れると色が変わり、2 本指で上下に 1 回なぞるごとに 15 度回る。OS のカーソルやランチャーの操作はそのまま使える。パックが無ければマウス（`Mouse.current`。Bluetooth マウスなど）を使う
+  - RAW: ON は Android の Pointer Capture（`Assets/AndroidXR/Scripts/TrackpadCapture.cs`。権限も manifest の変更も不要）。指ごとの絶対座標が来る（AURA のパックで 0〜1440 × 0〜2880、1 秒に約 70 回。指は 7 本まで認識した）。指を置いた位置から縦に動かすと大きさ、横に動かすと向きが変わる。最初に 60 単位（約 2.5 mm）動いた向きで、そのタッチを縦か横に固定する。キャプチャ中は OS のカーソルとランチャーの操作が止まり、OFF に戻すと戻る。アプリが前面でなくなると Android がキャプチャを解くので、1 秒ごとに取り直す
+  - パネル（指の点・click のランプ・更新回数・指の本数）は `TrackpadSample` が実行時に作る
+  - Pointer Capture の値は Input System・XRI・OpenXR のどれにも入らない。自分のスクリプトから `TrackpadCapture.Read` で読む
 - MRTK3: Android XR 用のプロファイル（手の関節を XR Hands から取る `UnityHandsSubsystem`）を Android に割り当て
 - `Assets/Editor/ManifestDedupe.cs`: `uses-feature android.software.xr.api.spatial` の二重注入を畳む（無いと APK のビルドが失敗する）
 - `Assets/Editor/AndroidXRProjectInit.cs`: パッケージ名と製品名を設定する
@@ -98,7 +103,7 @@ Unity Hub から作った場合は、`Tools > Android XR > Import Hand Visualize
 
 ## 既知の制限
 
-- XR Session の Target API Version は 3 に固定しています（manifest の `android.software.xr.api.spatial` の版）。既定の Automatic だと、Android XR Extensions v1.5.0 では 4 になり、Galaxy XR（3）が配布の対象から外れるためです。この値は最低要件なので、3 のままでも 4 以上の端末で動きます。Geospatial もレベル 3 で使えます。レベル 4 が必要な機能を使うときだけ、**Project Settings > XR Plug-in Management > OpenXR** の Android タブで XR Session の設定を開き、Target API Version を変えてください。端末の対応版は `adb shell pm list features` で確認できます。
+- XR Session の Target API Version は 3 に固定しています（manifest の `android.software.xr.api.spatial` の版）。既定の Automatic だと、Android XR Extensions v1.5.0 では 4 になり、Galaxy XR（3）が配布の対象から外れるためです。この値は最低要件なので、3 のままでも 4 以上の端末で動きます。Geospatial はレベル 4 以上と GPS（`android.hardware.location.gps`）が必要なので、Galaxy XR では使えません。レベル 4 が必要な機能を使うときだけ、**Project Settings > XR Plug-in Management > OpenXR** の Android タブで XR Session の設定を開き、Target API Version を変えてください。端末の対応版は `adb shell pm list features` で確認できます。
 - Samples の一部の音声ミキサーは Microsoft Spatializer（Windows 用のネイティブプラグイン）を参照しているため、ビルド時に「Effect Microsoft Spatializer Mixer could not be found」が出ます。Android ではこのプラグインの HRTF（上下・前後の方向感）が使えないだけで、音源の位置による聞こえ方の違いや、壁で音が小さくなる処理（AudioOcclusionExample）は動きます。ビルドと実行には影響しません。
 - MRTK3 の「見てピンチ（Gaze Pinch）」は、Android XR デバイス（Galaxy XR）では動きません。視線で選ぶ（ハイライト）ことはでき、掴むのは手のレイか直接つかみで行えます。
 - Samples の SolverExamples と TapToPlaceExample は、ARMeshManager（部屋のメッシュの表示）を止め、仮想の床と壁（TestDummyWalls）のマテリアルを半透明のものに差し替えています。元のワイヤーフレームのマテリアル（MRTK_Wireframe）はジオメトリシェーダーを使っていて、Android XR（Vulkan のマルチビュー）では左目の映像が崩れるためです。吸着や配置は仮想の床と壁で試せます。

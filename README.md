@@ -7,7 +7,7 @@ Use them from the Unity Hub "New project" window or with `unity projects create 
 
 | Template | Name (`--template`) | Contents |
 |---|---|---|
-| Android XR | `com.reseul.template.androidxr` | URP with the Android XR packages and settings. XR Origin, a cube in front of you, hand visualization, and hand interaction with plain XR Interaction Toolkit (grab, release to drop, poke a button) |
+| Android XR | `com.reseul.template.androidxr` | URP with the Android XR packages and settings. XR Origin, a cube in front of you, hand visualization, and hand interaction with plain XR Interaction Toolkit (grab, release to drop, poke a button), and a touchpad sample (the AURA puck) |
 | Android XR with MRTK3 | `com.reseul.template.androidxr-mrtk3` | The above plus MRTK3. MRTK XR Rig and a cube you can grab with your hands |
 | Android XR with MRTK3 (Samples) | `com.reseul.template.androidxr-mrtk3-samples` | The above plus the official MRTK3 sample scenes |
 
@@ -17,7 +17,7 @@ Scene names starting with `VR_` use the Skybox (VR view). Names starting with `P
 
 | Template | Scenes |
 |---|---|
-| Android XR | `VR_SampleScene` (first), `Passthrough_SampleScene` |
+| Android XR | `VR_SampleScene` (first), `Passthrough_SampleScene`, `Trackpad_SampleScene` (move the cube with a touchpad such as the AURA puck; see below) |
 | Android XR with MRTK3 | `MRTK3_VR_SampleScene` (first), `MRTK3_Passthrough_SampleScene`, `MRTK3_EyeAndHand_SampleScene` (select with your eyes, grab with your hands; an explanation is shown in the scene) |
 | Android XR with MRTK3 (Samples) | `HandInteractionExamples` (first), `HandInteractionExamples_Passthrough` (modified to use passthrough and spatial awareness), and the other official samples. Only the samples that work on Android XR are in the build; switch scenes with Next / Previous on the hand menu. The three MRTK3 scenes above are not included because they are not MRTK3 samples |
 
@@ -54,6 +54,11 @@ The following official samples stay in the Samples project but are not in the bu
   - The cube floats until you grab and release it once, then falls. The ball in the passthrough scene falls once the spatial mesh is found below it. Objects that fall through a hole in the mesh return to their start position
   - Poke the **Reset Button** with a finger to put the cube and ball back (`PokeButtonVisual` moves the cap and changes its color)
   - `Tools > Android XR > Add Hand Interaction` adds the same hands to an XR Origin in another scene
+- Touchpad (`Trackpad_SampleScene`, Android XR template): moves the cube in front of you with a touchpad such as the puck of XREAL Project AURA. Press the large **RAW** button next to the panel to switch between two ways of reading the pad
+  - RAW: OFF (default) uses the OpenXR mouse (Android Mouse Interaction Profile): only `click` (one finger), `secondaryClick` (two fingers), and `scroll` (two-finger swipe, movement only, about 18 updates a second). Tap to change the color; each two-finger swipe up or down turns the cube 15 degrees. The system cursor and launcher gestures keep working. Without a puck, a mouse (`Mouse.current`, e.g. Bluetooth) is used instead
+  - RAW: ON uses Android pointer capture (`Assets/AndroidXR/Scripts/TrackpadCapture.cs`, no permission or manifest change): the absolute position of every finger (0-1440 x 0-2880 on the AURA puck, about 70 updates a second; up to 7 fingers were recognized). Slide up/down from where your finger landed to change the size, left/right to turn it; the first 60 units (about 2.5 mm) of travel lock the touch to one direction. The system cursor and launcher gestures stop while captured and come back when you switch to OFF. Android releases capture when the app loses focus, so the script asks again every second
+  - The panel (finger dots, click lamps, updates per second, finger count) is built at runtime by `TrackpadSample`
+  - Pointer capture values do not go into the Input System, XRI, or OpenXR. Use them from your own scripts with `TrackpadCapture.Read`
 - MRTK3: an Android XR profile that takes hand joints from XR Hands (`UnityHandsSubsystem`) is assigned to Android
 - `Assets/Editor/ManifestDedupe.cs`: merges the duplicated `uses-feature android.software.xr.api.spatial` entries (without it, the APK build fails)
 - `Assets/Editor/AndroidXRProjectInit.cs`: sets the package name and product name
